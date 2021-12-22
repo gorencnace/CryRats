@@ -5,7 +5,7 @@ from secrets import token_hex
 from random import randint
 import os
 
-WRITE_PATH = "C:/Users/Nace/Documents/MAG2/CryRats/images/generated/"
+WRITE_PATH = "./images/generated/"
 
 # Rats
 RAT = "./images/rat.png"
@@ -25,69 +25,43 @@ DREADLOCKS = "./images/dreadlocks.png"
 GANGSTA = "./images/gangsta.png"
 
 # Mappings
-RATS_MAPPING = {0: RAT, 1: FAT, 2: SKINNY, 3: RAT2, 4: FAT2, 5: SKINNY2}
+RATS_MAPPING = {0: RAT, 1: SKINNY, 2: FAT, 3: RAT2, 4: SKINNY2, 5: FAT2}
 ACCESSORIES_MAPPING = {
     0: None,
     1: BUCKET_HAT,
     2: CHEF_HAT,
-    3: SANTA_HAT,
-    4: TOP_HAT,
-    5: WITCH_HAT,
-    6: DREADLOCKS,
-    7: GANGSTA,
+    3: DREADLOCKS,
+    4: GANGSTA,
+    5: SANTA_HAT,
+    6: TOP_HAT,
+    7: WITCH_HAT,
 }
 
 # colors BGR
-BLACK = [0, 0, 0]
-WHITE = [255, 255, 255]
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 RED = [0, 0, 255]
 ORANGE_RED = [0, 69, 255]
 GOLD = [0, 215, 255]
 
 f = 5  # expantion factor
 
-for name in range(100):
-    # random colors for rat
-    RAT_COLOR_PRIMARY = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]  # [0, 0, 255]
-    RAT_COLOR_SECONDARY = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]  # [255, 0, 0]
-    RAT_COLOR_TERTIARY = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]  # [255, 255, 0]
-    BACKGROUND = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]  # [0, 255, 0]
-    RAT_EYES = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]  # [255, 255, 255]
 
-    # random colors for accessory
-    ACC_PRIMARY = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]
-    ACC_SECONDARY = [
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-        np.uint8(int(token_hex(1), 16)),
-    ]
-
+def generate_rat(
+    token_id,
+    size,
+    accessory,
+    rat_primary,
+    rat_secondary,
+    rat_tertiary,
+    rat_eyes,
+    background,
+    accessory_primary,
+    accessory_secondary,
+):
+    print("Generating image...")
     # read rat img
-    rat_file_name = RATS_MAPPING[randint(0, len(RATS_MAPPING) - 1)]
+    rat_file_name = RATS_MAPPING[size]
     im = cv2.imread(rat_file_name, flags=cv2.IMREAD_COLOR)  # BGR format
 
     # new img
@@ -99,20 +73,20 @@ for name in range(100):
             for k in range(i * f, (i + 1) * f):
                 for l in range(j * f, (j + 1) * f):
                     if b < 5 and g > 250 and 110 < r < 125:  # green
-                        img[k][l] = BACKGROUND
+                        img[k][l] = background
                     elif b > 250 and g > 250 and r > 250:  # white
-                        img[k][l] = RAT_EYES
+                        img[k][l] = rat_eyes
                     elif 40 < b < 50 and 45 < g < 60 and 70 < r < 85:  # brown
-                        img[k][l] = RAT_COLOR_PRIMARY
+                        img[k][l] = rat_primary
                     elif b < 5 and 100 < g < 115 and r > 230:  # orange
-                        img[k][l] = RAT_COLOR_SECONDARY
+                        img[k][l] = rat_secondary
                     elif 95 < b < 105 and g < 40 and r > 225:  # pink
-                        img[k][l] = RAT_COLOR_TERTIARY
+                        img[k][l] = rat_tertiary
                     else:  # black
                         img[k][l] = BLACK
 
     # accessory coloring
-    accessory_file_name = ACCESSORIES_MAPPING[randint(0, len(ACCESSORIES_MAPPING) - 1)]
+    accessory_file_name = ACCESSORIES_MAPPING[accessory]
     if accessory_file_name:
         accessory = cv2.imread(accessory_file_name, flags=cv2.IMREAD_COLOR)
 
@@ -122,9 +96,9 @@ for name in range(100):
                 for k in range(i * f, (i + 1) * f):
                     for l in range(j * f, (j + 1) * f):
                         if 95 < b < 105 and g < 40 and r > 225:  # pink
-                            img[k][l] = ACC_PRIMARY
+                            img[k][l] = accessory_primary
                         elif 40 < b < 50 and 45 < g < 60 and 70 < r < 85:  # brown
-                            img[k][l] = ACC_SECONDARY
+                            img[k][l] = accessory_secondary
                         elif b > 250 and g > 250 and r > 250:  # white
                             img[k][l] = WHITE
                         elif 50 < b < 70 and g > 225 and r > 245:  # yellow
@@ -135,5 +109,7 @@ for name in range(100):
                             img[k][l] = ORANGE_RED
                         elif b < 10 and g < 10 and r < 10:  # black
                             img[k][l] = BLACK
-
-    cv2.imwrite(f"{WRITE_PATH}{name}.png", img)
+    generated_path = f"{WRITE_PATH}{token_id}.png"
+    cv2.imwrite(generated_path, img)
+    print("Image saved!")
+    return generated_path
