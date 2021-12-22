@@ -29,7 +29,7 @@ def main():
             f"./metadata/{network.show_active()}/{token_id}-{size}-{accessory}"
         )
         collectible_metadata = metadata_template
-        if Path(metadata_file_name).exists():
+        if Path(f"{metadata_file_name}.json").exists():
             print(f"{metadata_file_name} already exists! Delete it to override.")
         else:
             print(f"Creating Metadata file: {metadata_file_name}")
